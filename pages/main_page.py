@@ -1,17 +1,20 @@
 import time
 
+import allure
 from selenium.webdriver import ActionChains
 from selenium.webdriver.chrome.service import Service as ChromeService
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.wait import WebDriverWait
 from base.base_class import Base
+from utilities.logger import Logger
 
 main_page_toy_value = 0
 main_page_toy_price = 0
 main_page_toy_brand = "Большой слон"
 main_page_lower_price = 0
 main_page_upper_price = 0
+
 
 class MainPage(Base):
     def __init__(self, driver):
@@ -118,7 +121,7 @@ class MainPage(Base):
         cena_filter = self.get_filter_cena().get_attribute("style")
         print(cena_filter)
 
-    """Сохранить в переменную имя товара"""
+    """Save name to variable"""
     def save_main_toy_name(self):
         self.move_to_element(self.get_toy_1())
         global main_page_toy_value
@@ -126,41 +129,43 @@ class MainPage(Base):
         print("--- Main_page: Toy name is '" + main_page_toy_value + "'")
         return main_page_toy_value
 
-    """Сохранить в переменную цену товара"""
+    """Save price to variable"""
     def save_main_toy_price(self):
         global main_page_toy_price
         main_page_toy_price = self.get_toy_1_price().text
         print("--- Main_page: Toy price is " + main_page_toy_price)
         return main_page_toy_price
 
-    """Выбрать товар по фильтрам"""
+    """Select toy by filters"""
     def select_toys(self):
-        self.driver.get(self.url)
-        self.driver.maximize_window()
-        self.get_current_url()
+        with allure.step("Select toys"):
+            Logger.add_start_step(method="select_toys")
+            self.driver.get(self.url)
+            self.driver.maximize_window()
+            self.get_current_url()
 
-        """Select folder in Catalog:"""
-        self.click_catalog()     # click : Каталог
-        self.click_toys()        # Click : игрушки
-        self.click_see_all()     # Click : посмотреть все
-        time.sleep(3)
-        self.click_girls()      # Click : Игрушки для мальчиков
-        time.sleep(3)
-                                # проверить что страница верная
-        self.assert_word(self.get_main_word(self.l_main_word_boys_toys), "Игрушки для девочек")
+            """Select folder in Catalog:"""
+            self.click_catalog()     # click : Каталог
+            self.click_toys()        # Click : игрушки
+            self.click_see_all()     # Click : посмотреть все
+            time.sleep(3)
+            self.click_girls()      # Click : Игрушки для мальчиков
+            time.sleep(3)
+                                    # Check that page is correct
+            self.assert_word(self.get_main_word(self.l_main_word_boys_toys), "Игрушки для девочек")
 
-        """select the next filters"""
-        self.move_to_element(self.get_cena_r())   # перейти к цене
-        self.click_cena_r(self.get_cena_r(), 18, 0)      # Сдвинуть ползунок цена
-        self.click_all_brands()                 # раскрыть все бренды
-        self.click_brand()                      # Выбрать нужный бренд
-        self.click_apply_filters()              # применить фильтры
+            """select the next filters"""
+            self.move_to_element(self.get_cena_r())   # перейти к цене
+            self.click_cena_r(self.get_cena_r(), 18, 0)      # Сдвинуть ползунок цена
+            self.click_all_brands()                 # раскрыть все бренды
+            self.click_brand()                      # Выбрать нужный бренд
+            self.click_apply_filters()              # применить фильтры
 
-        """Select 1st toy, remember values of name and price """
-        self.save_main_toy_name()
-        self.save_main_toy_price()
-        try:
-            self.click_toy_1()
-        except:
-            print("Нет товаров для выбора, настройте фильтры")
-
+            """Select 1st toy, remember values of name and price """
+            self.save_main_toy_name()
+            self.save_main_toy_price()
+            try:
+                self.click_toy_1()
+            except:
+                print("Нет товаров для выбора, настройте фильтры")
+            Logger.add_end_step(url=self.driver.current_url, method="select_toys")

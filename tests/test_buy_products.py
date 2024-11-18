@@ -11,7 +11,10 @@ from pages.login_page import LoginPage
 from pages.main_page import MainPage
 from pages.order_page import OrderPage
 from pages.toy_page import ToyPage
+import allure
 
+"""Select 1 toy by filters and send to cart """
+@allure.description("Test buy product 1")
 def test_buy_product_1(set_module):
     options = webdriver.ChromeOptions()
     options.add_experimental_option("detach", True)

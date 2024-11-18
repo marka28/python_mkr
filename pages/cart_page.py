@@ -1,14 +1,14 @@
+import allure
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.wait import WebDriverWait
 
 import pages.main_page
 from base.base_class import Base
+from utilities.logger import Logger
+
 
 class CartPage(Base):
-    def __init__(self, driver):
-        super().__init__(driver)
-        self.driver = driver
 
     # Locators
     l_cart_word = "//div[@class='title']/h1"
@@ -53,14 +53,17 @@ class CartPage(Base):
         self.assert_price(cart_sum_value, pages.main_page.main_page_toy_price)
 
     def check_cart_and_order(self):
-        self.assert_word(self.get_cart_word(),"Корзина")            # проверка Корзина
-        try:
-            if self.get_cart_name():
-                print("Товар в корзине")
-        except:
-            print("Товар отсутствует в корзине")
-        self.assert_word(self.get_cart_name(), pages.main_page.main_page_toy_value)  # проверка правильного товара
-        print("--- Cart_page: name " + self.get_cart_name().text)
-        self.check_price()          # проверка цены
-        self.check_sum()             # проверка Суммы покупки
-        self.click_order()               # Go to cart
+        with allure.step("Check cart and order"):
+            Logger.add_start_step(method="check_cart_and_order")
+            self.assert_word(self.get_cart_word(),"Корзина")            # проверка Корзина
+            try:
+                if self.get_cart_name():
+                    print("Товар в корзине")
+            except:
+                print("Товар отсутствует в корзине")
+            self.assert_word(self.get_cart_name(), pages.main_page.main_page_toy_value)  # проверка правильного товара
+            print("--- Cart_page: name " + self.get_cart_name().text)
+            self.check_price()          # проверка цены
+            self.check_sum()             # проверка Суммы покупки
+            self.click_order()               # Go to cart
+            Logger.add_end_step(url=self.driver.current_url, method="check_cart_and_order")

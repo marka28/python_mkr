@@ -1,15 +1,15 @@
+import allure
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.wait import WebDriverWait
 
 import pages.main_page
 from base.base_class import Base
+from utilities.logger import Logger
 
 
 class ToyPage(Base):
-    def __init__(self, driver):
-        super().__init__(driver)
-        self.driver = driver
+
 
     # Locators
     l_toy_name = "//h1[@class='_h1_l3inj_12']"
@@ -44,15 +44,19 @@ class ToyPage(Base):
         print("Click меню Корзина")
 
     # Methods
+    """select toy and put to cart"""
     def check_and_put_to_cart(self):
-        print("--- Toy_page: name "+self.get_toy_name().text)
-        self.assert_word(self.get_toy_name(), pages.main_page.main_page_toy_value)  # проверка правильного товара
-        print("--- Toy_page: price " + self.get_toy_price().text)
-        self.assert_word(self.get_toy_price(), pages.main_page.main_page_toy_price)  # проверка цены
+        with allure.step("Check toy and put to cart"):
+            Logger.add_start_step(method="check_and_put_to_cart")
+            print("--- Toy_page: name "+self.get_toy_name().text)
+            self.assert_word(self.get_toy_name(), pages.main_page.main_page_toy_value)  # проверка правильного товара
+            print("--- Toy_page: price " + self.get_toy_price().text)
+            self.assert_word(self.get_toy_price(), pages.main_page.main_page_toy_price)  # проверка цены
 
-        print("--- Toy_page: brand " + self.get_toy_brand().text)
-        self.assert_word(self.get_toy_brand(), pages.main_page.main_page_toy_brand)  # проверка Бренда
+            print("--- Toy_page: brand " + self.get_toy_brand().text)
+            self.assert_word(self.get_toy_brand(), pages.main_page.main_page_toy_brand)  # проверка Бренда
 
-        self.click_put_to_cart()        # Put toy to cart
-        self.click_cart()               # Go to cart
-        self.assert_url("https://my-shop.ru/my/cart")  # check cart's url
+            self.click_put_to_cart()        # Put toy to cart
+            self.click_cart()               # Go to cart
+            self.assert_url("https://my-shop.ru/my/cart")  # check cart's url
+            Logger.add_end_step(url=self.driver.current_url, method="check_and_put_to_cart")
